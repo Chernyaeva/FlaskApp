@@ -7,10 +7,14 @@ from blog.views.users import users_app
 from blog.views.articles import articles_app
 from blog.models.database import db
 from blog.views.auth import login_manager, auth_app
-
+import os
+from flask_migrate import Migrate
 
 
 app = Flask(__name__)
+
+cfg_name = os.environ.get("CONFIG_NAME") or "DevConfig"
+app.config.from_object(f"blog.configs.{cfg_name}")
 
 app.config["SECRET_KEY"] = "abcdefg123456"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/blog.db"
@@ -35,8 +39,8 @@ def create_users():
     > done! created users: <User #1 'admin'> <User #2 'james'>
     """
     from blog.models import User
-    admin = User(username="admin", is_staff=True)
-    james = User(username="james")
+    admin = User(username="admin", is_staff=True, email="admin@admins.com", is_admin=True)
+    james = User(username="james", email="james@users.com")
 
     db.session.add(admin)
     db.session.add(james)
@@ -87,3 +91,5 @@ def process_after_request(response):
         response.headers["process-time"] = time() - g.start_time
     return response
 
+
+migrate = Migrate(app, db, compare_type=True)
