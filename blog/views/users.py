@@ -4,6 +4,7 @@ from blog.models import User
 from flask_login import login_required
 
 
+
 users_app = Blueprint("users_app", __name__)
 
 
