@@ -105,3 +105,22 @@ def process_after_request(response):
 
 
 migrate = Migrate(app, db, compare_type=True, render_as_batch=True)
+
+@app.cli.command("create-tags")
+def create_tags():
+    """
+    Run in your terminal:
+    ➜ flask create-tags
+    """
+    from blog.models import Tag
+    for name in [
+                "cats",
+                "dogs",
+                "pythons",
+                "turtles",
+                "rabbits",
+                ]:
+        tag = Tag(name=name)
+        db.session.add(tag)
+    db.session.commit()
+    print("tags created")
