@@ -11,7 +11,7 @@ import os
 from flask_migrate import Migrate
 from blog.security import flask_bcrypt
 from blog.views.authors import authors_app
-
+from blog.admin import admin
 
 
 app = Flask(__name__)
@@ -26,45 +26,14 @@ db.init_app(app)
 
 flask_bcrypt.init_app(app)
 
-
-@app.cli.command("create-users")
-def create_users():
-    """
-    Run in your terminal:
-    flask create-users
-    > done! created users: <User #2 'james'>
-    """
-    from blog.models import User
-    james = User(username="james", email="james@users.com")
-
-    db.session.add(james)
-    db.session.commit()
-    
-    print("done! created users:", james)
-    
-
-@app.cli.command("create-admin")
-def create_admin():
-    """
-    Run in your terminal:
-    ➜ flask create-admin
-    > created admin: <User #1 'admin'>
-    """
-    from blog.models import User
-    admin = User(username="admin", is_staff=True)
-    admin.password = os.environ.get("ADMIN_PASSWORD") or "adminpass"
-    db.session.add(admin)
-    db.session.commit()
-    print("created admin:", admin)
-
-
-
 app.register_blueprint(users_app, url_prefix="/users")
 app.register_blueprint(articles_app, url_prefix="/articles")
 app.register_blueprint(auth_app, url_prefix="/auth")
 app.register_blueprint(authors_app, url_prefix="/authors")
 
 login_manager.init_app(app)
+
+admin.init_app(app)
 
 @app.route("/")
 def index():
@@ -105,6 +74,38 @@ def process_after_request(response):
 
 
 migrate = Migrate(app, db, compare_type=True, render_as_batch=True)
+
+
+@app.cli.command("create-users")
+def create_users():
+    """
+    Run in your terminal:
+    flask create-users
+    > done! created users: <User #2 'james'>
+    """
+    from blog.models import User
+    james = User(username="james", email="james@users.com")
+
+    db.session.add(james)
+    db.session.commit()
+    
+    print("done! created users:", james)
+    
+
+@app.cli.command("create-admin")
+def create_admin():
+    """
+    Run in your terminal:
+    ➜ flask create-admin
+    > created admin: <User #1 'admin'>
+    """
+    from blog.models import User
+    admin = User(username="admin", is_staff=True)
+    admin.password = os.environ.get("ADMIN_PASSWORD") or "adminpass"
+    db.session.add(admin)
+    db.session.commit()
+    print("created admin:", admin)
+    
 
 @app.cli.command("create-tags")
 def create_tags():
