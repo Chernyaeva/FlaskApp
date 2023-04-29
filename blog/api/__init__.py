@@ -44,4 +44,3 @@ def init_api(app):
     api.route(AuthorDetail, "author_detail", "/api/authors/<int:id>/", tag="Author")
     api.route(ArticleList, "article_list", "/api/articles/", tag="Article")
     api.route(ArticleDetail, "article_detail", "/api/articles/<int:id>/", tag="Article")
-
